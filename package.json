@@ -1,0 +1,23 @@
+{
+  "name": "@runninghill/simple-encryption",
+  "version": "0.0.0",
+  "description": "A package that allows you to simply encrypt and decrypt data.",
+  "main": "index.js",
+  "scripts": {
+    "test": "jest --coverage",
+    "lint": "eslint ./"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Runninghill/simple-encryption.git"
+  },
+  "author": "Gavin de Bruyn",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/Runninghill/simple-encryption/issues"
+  },
+  "homepage": "https://github.com/Runninghill/simple-encryption#readme",
+  "devDependencies": {
+    "eslint": "8.4.1"
+  }
+}
