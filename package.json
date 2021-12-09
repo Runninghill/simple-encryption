@@ -17,7 +17,13 @@
     "url": "https://github.com/Runninghill/simple-encryption/issues"
   },
   "homepage": "https://github.com/Runninghill/simple-encryption#readme",
+  "dependencies": {
+    "bcryptjs": "2.4.3",
+    "crypto-js": "4.1.1"
+  },
   "devDependencies": {
+    "@jest/globals": "27.4.2",
+    "jest": "27.4.3",
     "eslint": "8.4.1"
   }
 }
