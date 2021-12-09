@@ -10,8 +10,10 @@ module.exports = {
             lines: 90,
         },
     },
+    injectGlobals: false,
     modulePathIgnorePatterns: [
         'jest.config.js',
-        'coverage'
+        'coverage',
+        'index.js'
     ]
 }

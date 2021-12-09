@@ -8,7 +8,7 @@ class Encryptor {
         const defaultConfig = {
             secret: 'default',
             saltRounds: 10,
-            saltPlacementStrategy: SaltPlacementStrategy.Front
+            saltPlacementStrategy: SaltPlacementStrategy.Before
         }
 
         this.config = Object.assign(defaultConfig, config)
@@ -28,7 +28,7 @@ class Encryptor {
         const encryptionKey = await this._generateEncryptionKey(salt)
         const decryptedData = aes.decrypt(encryptedData, encryptionKey).toString(utf8)
 
-        return decryptedData
+        return JSON.parse(decryptedData)
     }
 
     async _generateEncryptionKey(salt) {
@@ -38,7 +38,7 @@ class Encryptor {
     _placeSalt(salt, encryptedData) {
         let encryption
 
-        if (this.config.saltPlacementStrategy === SaltPlacementStrategy.Back) {
+        if (this.config.saltPlacementStrategy === SaltPlacementStrategy.After) {
             encryption = encryptedData + salt
         } else {
             encryption = salt + encryptedData
@@ -51,9 +51,9 @@ class Encryptor {
         const saltLength = 29
         let salt, encryptedData
 
-        if (this.config.saltPlacementStrategy === SaltPlacementStrategy.Back) {
-            salt = encryption.slice(saltLength * -1)
-            encryptedData = encryption.slice(saltLength)
+        if (this.config.saltPlacementStrategy === SaltPlacementStrategy.After) {
+            salt = encryption.slice(encryption.length - saltLength)
+            encryptedData = encryption.slice(0, encryption.length - saltLength)
         } else {
             salt = encryption.slice(0, saltLength)
             encryptedData = encryption.slice(saltLength)
