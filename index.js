@@ -1,5 +1,7 @@
 const { Encryptor } = require('./logic/encryptor')
+const { SaltPlacementStrategy } = require('./enums/salt-placement-strategy.enum')
 
 module.exports = {
-    Encryptor: Encryptor
+    Encryptor: Encryptor,
+    SaltPlacementStrategy: SaltPlacementStrategy
 }
