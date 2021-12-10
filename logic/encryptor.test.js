@@ -3,6 +3,7 @@ const { Encryptor } = require('./encryptor')
 const { SaltPlacementStrategy } = require('../enums/salt-placement-strategy.enum')
 const bcrypt = require('bcryptjs')
 const aes = require('crypto-js/aes')
+const { InvalidArgumentError } = require('../errors/invalid-argument.error')
 
 describe('test Encryptor', () => {
     const defaultConfig = {
@@ -47,7 +48,7 @@ describe('test Encryptor', () => {
             generateSaltSpy = jest.spyOn(bcrypt, 'genSalt').mockResolvedValue(mockSalt)
             aesEncryptSpy = jest.spyOn(aes, 'encrypt').mockReturnValue(mockEncryptedData)
             generateEncryptionKeySpy = jest.spyOn(encryptor, '_generateEncryptionKey').mockResolvedValue(mockEncryptionKey)
-            placeSaltSpy = jest.spyOn(encryptor, '_placeSalt').mockReturnValue(mockEncryption)
+            placeSaltSpy = jest.spyOn(encryptor, '_placeSalt')
         })
 
         afterEach(() => {
@@ -91,7 +92,6 @@ describe('test Encryptor', () => {
         })
 
         it('should be able to work with objects', async () => {
-            aesEncryptSpy.mockRestore()
             let result = await encryptor.encrypt({
                 name: 'Piet',
                 surname: 'Pompies',
@@ -100,6 +100,27 @@ describe('test Encryptor', () => {
             })
 
             void expect(result).toBeTruthy()
+        })
+
+        it('should throw an error if no data is provided', async () => {
+            aesEncryptSpy.mockRestore()
+            let error
+            try {
+                await encryptor.encrypt(undefined)
+            } catch (e) {
+                error = e
+            }
+            void expect(error).toBeTruthy()
+            void expect(error).toBeInstanceOf(InvalidArgumentError)
+
+            error = undefined
+            try {
+                await encryptor.encrypt(null)
+            } catch (e) {
+                error = e
+            }
+            void expect(error).toBeTruthy()
+            void expect(error).toBeInstanceOf(InvalidArgumentError)
         })
     })
 
@@ -170,6 +191,27 @@ describe('test Encryptor', () => {
                 })
             })
         })
+
+        it('should throw an error if no encryption is provided', async () => {
+            aesDecryptSpy.mockRestore()
+            let error
+            try {
+                await encryptor.decrypt(undefined)
+            } catch (e) {
+                error = e
+            }
+            void expect(error).toBeTruthy()
+            void expect(error).toBeInstanceOf(InvalidArgumentError)
+
+            error = undefined
+            try {
+                await encryptor.decrypt(null)
+            } catch (e) {
+                error = e
+            }
+            void expect(error).toBeTruthy()
+            void expect(error).toBeInstanceOf(InvalidArgumentError)
+        })
     })
 
     describe('test generateEncryptionKey', () => {
@@ -179,6 +221,28 @@ describe('test Encryptor', () => {
 
             void expect(hashSpy).toBeCalledTimes(1)
             void expect(hashSpy).toBeCalledWith(encryptor.config.secret, mockSalt)
+        })
+
+        it('should throw an error if the salt is not provided', async () => {
+            let error
+            try {
+                await encryptor._generateEncryptionKey(undefined)
+            } catch (e) {
+                error = e
+            }
+
+            void expect(error).toBeTruthy()
+            void expect(error).toBeInstanceOf(InvalidArgumentError)
+
+            error = undefined
+            try {
+                await encryptor._generateEncryptionKey(null)
+            } catch (e) {
+                error = e
+            }
+
+            void expect(error).toBeTruthy()
+            void expect(error).toBeInstanceOf(InvalidArgumentError)
         })
     })
 
@@ -196,10 +260,54 @@ describe('test Encryptor', () => {
 
             void expect(result).toEqual(mockEncryptedData + mockSalt)
         })
+
+        it('should throw an error if the salt is not provided', () => {
+            let error
+            try {
+                encryptor._placeSalt(undefined, mockEncryptedData)
+            } catch (e) {
+                error = e
+            }
+
+            void expect(error).toBeTruthy()
+            void expect(error).toBeInstanceOf(InvalidArgumentError)
+
+            error = undefined
+            try {
+                encryptor._placeSalt(null, mockEncryptedData)
+            } catch (e) {
+                error = e
+            }
+
+            void expect(error).toBeTruthy()
+            void expect(error).toBeInstanceOf(InvalidArgumentError)
+        })
+
+        it('should throw an error if the encrypted data is not provided', () => {
+            let error
+            try {
+                encryptor._placeSalt(mockSalt, undefined)
+            } catch (e) {
+                error = e
+            }
+
+            void expect(error).toBeTruthy()
+            void expect(error).toBeInstanceOf(InvalidArgumentError)
+
+            error = undefined
+            try {
+                encryptor._placeSalt(mockSalt, null)
+            } catch (e) {
+                error = e
+            }
+
+            void expect(error).toBeTruthy()
+            void expect(error).toBeInstanceOf(InvalidArgumentError)
+        })
     })
 
     describe('test deconstructEncryption', () => {
-        it('should be able to deconstruct the encryption when the salt is before the encrypted data', () => {
+        it('should be able to deconstruct the encryption when the salt is placed before the encrypted data', () => {
             encryptor.config.saltPlacementStrategy = SaltPlacementStrategy.Before
             const result = encryptor._deconstructEncryption(mockSalt + mockEncryptedData)
 
@@ -217,6 +325,50 @@ describe('test Encryptor', () => {
                 salt: mockSalt,
                 encryptedData: mockEncryptedData
             })
+        })
+
+        it('should throw an error if the encryption is not provided', () => {
+            let error
+            try {
+                encryptor._deconstructEncryption(undefined)
+            } catch (e) {
+                error = e
+            }
+
+            void expect(error).toBeTruthy()
+            void expect(error).toBeInstanceOf(InvalidArgumentError)
+
+            error = undefined
+            try {
+                encryptor._deconstructEncryption(null)
+            } catch (e) {
+                error = e
+            }
+
+            void expect(error).toBeTruthy()
+            void expect(error).toBeInstanceOf(InvalidArgumentError)
+        })
+
+        it('should throw an error if the encryption is malformed', () => {
+            let error
+            try {
+                encryptor._deconstructEncryption(mockEncryption.slice(0, 10))
+            } catch (e) {
+                error = e
+            }
+
+            void expect(error).toBeTruthy()
+            void expect(error).toBeInstanceOf(InvalidArgumentError)
+
+            error = undefined
+            try {
+                encryptor._deconstructEncryption(mockEncryption.slice(0, 10))
+            } catch (e) {
+                error = e
+            }
+
+            void expect(error).toBeTruthy()
+            void expect(error).toBeInstanceOf(InvalidArgumentError)
         })
     })
 })
