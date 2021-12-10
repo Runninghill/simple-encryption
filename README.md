@@ -29,7 +29,8 @@ It is recommended that you configure the `secret`, this is your private key for 
 
 To understand what you can configure, check out the [API reference](#Encryptor).
 
-**NB: In order to**
+**NB: In order to decrypt data, the configuration of the Encryptor instance 
+must be the same as the one used to initially encrypt the data.**
 
 ```javascript
 const { Encryptor } = require('@runninghill/simple-encryption')
@@ -43,24 +44,24 @@ const encryptor = new Encryptor({
 To encrypt data, simply call the [encrypt](#*Encrypt*) method:
 
 ```javascript
-    const user = {
-        name: 'John',
-        surname: 'Doe',
-        age: 31
-    }
+const user = {
+    name: 'John',
+    surname: 'Doe',
+    age: 31
+}
 
-    const encryption = await encryptor.encrypt(user)
+const encryption = await encryptor.encrypt(user)
 ```
 
 To decrypt data, simply call the [decrypt](#*Decrypt*) method:
 
 ```javascript
-    const decryptedData = await encryptor.decrypt(encryption)
-    // decryptedData = {
-    //     name: 'John',
-    //     surname: 'Doe',
-    //     age: 31
-    // }
+const decryptedData = await encryptor.decrypt(encryption)
+// decryptedData = {
+//     name: 'John',
+//     surname: 'Doe',
+//     age: 31
+// }
 ```
 
 # API Reference 📖

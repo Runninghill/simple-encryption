@@ -1,0 +1,19 @@
+name: continuous-deployment
+
+on:
+  push:
+    branches:
+      - prod
+
+env:
+  NODE_VERSION: 14.x
+
+jobs:
+  continuous-deployment:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v2
+
+      - name: Publish to npmjs.org
+        run: npm publish --access public
