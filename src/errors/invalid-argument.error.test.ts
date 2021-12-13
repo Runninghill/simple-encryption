@@ -1,5 +1,5 @@
-const { describe, expect, it } = require('@jest/globals')
-const { InvalidArgumentError } = require('./invalid-argument.error')
+import { describe, expect, it } from '@jest/globals'
+import { InvalidArgumentError } from './invalid-argument.error'
 
 describe('test InvalidArgumentError', () => {
     it('should provide the invalid argument\'s name in the message', () => {
