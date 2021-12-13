@@ -1,6 +1,8 @@
 module.exports = {
+    preset: 'ts-jest',
+    testEnvironment: 'node',
     collectCoverage: true,
-    collectCoverageFrom: ['./**/*.js'],
+    collectCoverageFrom: ['./**/*.ts'],
     coverageReporters: ['json', 'html'],
     coverageThreshold: {
         global: {
@@ -14,6 +16,7 @@ module.exports = {
     modulePathIgnorePatterns: [
         'jest.config.js',
         'coverage',
-        'index.js'
+        'lib',
+        'index.ts'
     ]
 }
